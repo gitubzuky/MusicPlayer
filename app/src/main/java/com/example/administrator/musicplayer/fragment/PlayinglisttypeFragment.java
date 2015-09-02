@@ -50,16 +50,15 @@ public class PlayinglisttypeFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position < 2) {
                     MainActivity activity = (MainActivity) getActivity();
-                    activity.replaceFragment();
-//                    FragmentManager fm = activity.getFragmentManager();
-//                    FragmentTransaction ft = fm.beginTransaction();
-//
-//                    if (activity.songlistfragment == null) {
-//                        activity.songlistfragment = new SonglistFragment();
-//                    }
-//
-//                    ft.replace(R.id.fm_content, activity.songlistfragment);
-//                    ft.commit();
+//                    activity.replaceFragment();
+                    FragmentManager fm = getFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+
+                    if (activity.songlistfragment == null) {
+                        activity.songlistfragment = new SonglistFragment();
+                    }
+                    ft.replace(R.id.fm_content, activity.songlistfragment);
+                    ft.commit();
                     Toast.makeText(context, "click"+position, Toast.LENGTH_SHORT).show();
                 }
             }
