@@ -52,7 +52,6 @@ public class SonglistFragment extends Fragment {
         songlistAdapter = new SonglistAdapter(context, songInfos);
         lv_Songlist.setAdapter(songlistAdapter);
         Log.i("SonglistFragment", "bindsuccess");
-
     }
 
     private ArrayList<SongInfo> initData() {
