@@ -18,13 +18,12 @@
             android:layout_width="fill_parent"
             android:id="@+id/header"/>
 
-        <fragment
-            android:name="com.example.administrator.musicplayer.fragment.PlayinglisttypeFragment"
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/header"
             android:id="@+id/fm_content"
-            tools:layout="@layout/layout_playlisttype"
             />
 
         <include

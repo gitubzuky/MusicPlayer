@@ -71,15 +71,6 @@ public class MainActivity extends ActionBarActivity {
         transaction.commit();
     }
 
-    public void replaceFragment(){
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-
-        songlistfragment = new SonglistFragment();
-        transaction.replace(R.id.fm_content, songlistfragment);
-        transaction.commit();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

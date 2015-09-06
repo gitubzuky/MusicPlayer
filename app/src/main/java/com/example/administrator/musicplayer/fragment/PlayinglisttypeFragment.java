@@ -18,6 +18,10 @@ import com.example.administrator.musicplayer.R;
 import com.example.administrator.musicplayer.activitys.MainActivity;
 import com.example.administrator.musicplayer.adapter.PlaylisttypeAdapter;
 
+import java.util.IllegalFormatException;
+
+import javax.security.auth.callback.Callback;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -30,13 +34,21 @@ public class PlayinglisttypeFragment extends Fragment {
     ListView lv_Playlisttype;
 
     Context context;
+    Callbacks mCallbacks;
 //    MainActivity activity;
 
+    public interface Callbacks{
+        public void onItemSelected(Integer id);
+    }
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         context = activity;
 //        this.activity = (MainActivity)activity;
+        if(!(activity instanceof Callbacks)){
+            throw new IllegalStateException("必须实现Callbacks接口");
+        }
+           mCallbacks = (Callbacks)activity;
     }
 
     @Override
@@ -57,7 +69,10 @@ public class PlayinglisttypeFragment extends Fragment {
                     if (activity.songlistfragment == null) {
                         activity.songlistfragment = new SonglistFragment();
                     }
-                    ft.replace(R.id.fm_content, activity.songlistfragment);
+//                    ft.replace(R.id.fm_content, activity.songlistfragment);
+                    ft.hide(PlayinglisttypeFragment.this);
+                    ft.add(R.id.fm_content, activity.songlistfragment);
+                    ft.addToBackStack(null);
                     ft.commit();
                     Toast.makeText(context, "click"+position, Toast.LENGTH_SHORT).show();
                 }
@@ -69,6 +84,7 @@ public class PlayinglisttypeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mCallbacks = null;
         ButterKnife.unbind(this);
     }
 }
