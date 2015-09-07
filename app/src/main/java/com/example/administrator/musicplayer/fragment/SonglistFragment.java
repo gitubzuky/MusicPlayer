@@ -9,11 +9,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.administrator.musicplayer.R;
 import com.example.administrator.musicplayer.adapter.SonglistAdapter;
 import com.example.administrator.musicplayer.bean.SongInfo;
+import com.example.administrator.musicplayer.interfaces.SonglistOnItemClickListener;
 
 import java.util.ArrayList;
 
@@ -36,7 +39,6 @@ public class SonglistFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         context = activity;
-
     }
 
     @Override
@@ -51,7 +53,14 @@ public class SonglistFragment extends Fragment {
     private void initView() {
         songlistAdapter = new SonglistAdapter(context, songInfos);
         lv_Songlist.setAdapter(songlistAdapter);
-        Log.i("SonglistFragment", "bindsuccess");
+        lv_Songlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(getActivity() instanceof SonglistOnItemClickListener){
+                    ((SonglistOnItemClickListener)getActivity()).OnSonglistItemClick(view, position);
+                }
+            }
+        });
     }
 
     private ArrayList<SongInfo> initData() {

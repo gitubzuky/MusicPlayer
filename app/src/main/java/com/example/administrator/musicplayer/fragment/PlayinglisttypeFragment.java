@@ -2,25 +2,17 @@ package com.example.administrator.musicplayer.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.administrator.musicplayer.R;
-import com.example.administrator.musicplayer.activitys.MainActivity;
 import com.example.administrator.musicplayer.adapter.PlaylisttypeAdapter;
-
-import java.util.IllegalFormatException;
-
-import javax.security.auth.callback.Callback;
+import com.example.administrator.musicplayer.interfaces.PlaylistypeOnItemClickListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,22 +25,14 @@ public class PlayinglisttypeFragment extends Fragment {
     @Bind(R.id.lv_playlisttype)
     ListView lv_Playlisttype;
 
-    Context context;
-    Callbacks mCallbacks;
-//    MainActivity activity;
 
-    public interface Callbacks{
-        public void onItemSelected(Integer id);
-    }
+    Context context;
+
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         context = activity;
-//        this.activity = (MainActivity)activity;
-        if(!(activity instanceof Callbacks)){
-            throw new IllegalStateException("必须实现Callbacks接口");
-        }
-           mCallbacks = (Callbacks)activity;
     }
 
     @Override
@@ -60,31 +44,21 @@ public class PlayinglisttypeFragment extends Fragment {
         lv_Playlisttype.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position < 2) {
-                    MainActivity activity = (MainActivity) getActivity();
-//                    activity.replaceFragment();
-                    FragmentManager fm = getFragmentManager();
-                    FragmentTransaction ft = fm.beginTransaction();
-
-                    if (activity.songlistfragment == null) {
-                        activity.songlistfragment = new SonglistFragment();
-                    }
-//                    ft.replace(R.id.fm_content, activity.songlistfragment);
-                    ft.hide(PlayinglisttypeFragment.this);
-                    ft.add(R.id.fm_content, activity.songlistfragment);
-                    ft.addToBackStack(null);
-                    ft.commit();
-                    Toast.makeText(context, "click"+position, Toast.LENGTH_SHORT).show();
+                if (getActivity() instanceof PlaylistypeOnItemClickListener)
+                {
+                    ((PlaylistypeOnItemClickListener) getActivity()).OnListtypeItemClick(position);
                 }
+//
             }
         });
+
         return playlisttype;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mCallbacks = null;
+//        mCallbacks = null;
         ButterKnife.unbind(this);
     }
 }

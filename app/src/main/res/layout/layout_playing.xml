@@ -1,6 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/playing_bg">
+    <TextView
+        android:id="@+id/tv_playing_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="正在播放"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="25dp"/>
+
+    <TextView
+        android:id="@+id/tv_playing_songname"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="海阔天空-Beyond"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="17dp"
+        android:layout_below="@+id/tv_playing_title"
+        android:layout_marginTop="20dp"/>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/rl_playing_albumandplay"
+        android:layout_below="@+id/tv_playing_songname"
+        android:layout_above="@+id/rl_playing_firtline"
+        >
+        <ImageView
+            android:id="@+id/iv_playing_albumimg"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/playing_album"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/playing_playorpausebtn"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/ibtn_playing_playorpause" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:id="@+id/rl_playing_firtline"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:layout_above="@+id/rl_playing_secondline">
+        <ImageButton
+            android:layout_width="26dp"
+            android:layout_height="30dp"
+            android:background="@drawable/playing_deletefromlistbtn"
+            android:id="@+id/ibtn_playing_deletefromlist"
+            android:layout_centerVertical="true"/>
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:background="@drawable/playing_showlyricsbtn"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/ibtn_playing_deletefromlist"
+            android:id="@+id/ibtn_playing_showlyric"
+            android:layout_marginRight="25dp"
+            android:layout_marginLeft="25dp"
+            />
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="10dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/playing_showlistbtn"
+            android:layout_toRightOf="@+id/ibtn_playing_showlyric"
+            android:id="@+id/ibtn_playing_showlist"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rl_playing_secondline"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true">
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/playing_likebtn"
+            android:id="@+id/ibtn_playing_like"/>
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/playing_previousbtn"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/ibtn_playing_like"
+            android:id="@+id/ibtn_playing_previous"
+            android:layout_alignTop="@+id/ibtn_playing_like"
+            android:layout_marginRight="24dp"
+            android:layout_marginLeft="24dp"
+            />
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/playing_nextbtn"
+            android:layout_toRightOf="@+id/ibtn_playing_previous"
+            android:id="@+id/ibtn_playing_next"
+            android:layout_alignTop="@+id/ibtn_playing_like"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>
