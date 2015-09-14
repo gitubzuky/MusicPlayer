@@ -44,7 +44,9 @@ public class MainActivity extends ActionBarActivity implements PlaylistypeOnItem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initView();
+        if(savedInstanceState == null) {
+            initView();
+        }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -64,7 +66,7 @@ public class MainActivity extends ActionBarActivity implements PlaylistypeOnItem
 //            }
 //        });
 
-        setDefaultFragment();
+            setDefaultFragment();
     }
 
     private void setDefaultFragment() {
@@ -111,7 +113,7 @@ public class MainActivity extends ActionBarActivity implements PlaylistypeOnItem
 //                    ft.replace(R.id.fm_content, activity.songlistfragment);
             ft.hide(playlisttypefragment);
             ft.add(R.id.fm_content, this.songlistfragment, "Songlist");
-            ft.addToBackStack("Songlist");
+            ft.addToBackStack(null);
             ft.commit();
             Toast.makeText(MainActivity.this, "click" + position, Toast.LENGTH_SHORT).show();
         }
