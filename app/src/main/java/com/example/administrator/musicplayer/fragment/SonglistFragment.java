@@ -4,19 +4,17 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.administrator.musicplayer.R;
 import com.example.administrator.musicplayer.adapter.SonglistAdapter;
 import com.example.administrator.musicplayer.bean.SongInfo;
 import com.example.administrator.musicplayer.interfaces.SonglistOnItemClickListener;
+import com.example.administrator.musicplayer.utils.SongUtil;
 
 import java.util.ArrayList;
 
@@ -32,7 +30,7 @@ public class SonglistFragment extends Fragment {
     ListView lv_Songlist;
 
     private SonglistAdapter songlistAdapter;
-    private ArrayList<SongInfo> songInfos;
+    private ArrayList<SongInfo> songList;
     Context context;
 
     @Override
@@ -51,7 +49,7 @@ public class SonglistFragment extends Fragment {
     }
 
     private void initView() {
-        songlistAdapter = new SonglistAdapter(context, songInfos);
+        songlistAdapter = new SonglistAdapter(context, songList);
         lv_Songlist.setAdapter(songlistAdapter);
         lv_Songlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -64,20 +62,9 @@ public class SonglistFragment extends Fragment {
     }
 
     private ArrayList<SongInfo> initData() {
-        songInfos = new ArrayList<SongInfo>();
-        SongInfo songInfo1 = new SongInfo("海阔天空", "Beyond");
-        songInfos.add(songInfo1);
-
-        SongInfo songInfo2 = new SongInfo("董小姐", "宋冬野");
-        songInfos.add(songInfo2);
-
-        SongInfo songInfo3 = new SongInfo("大地","Beyond");
-        songInfos.add(songInfo3);
-
-        SongInfo songInfo4 = new SongInfo("龙卷风", "周杰伦");
-        songInfos.add(songInfo4);
-
-        return songInfos;
+        songList = new ArrayList<SongInfo>();
+        songList = SongUtil.GetAllSongInfo(context);
+        return songList;
     }
 
     @Override
