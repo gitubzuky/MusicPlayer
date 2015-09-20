@@ -12,9 +12,8 @@ import android.widget.ListView;
 
 import com.example.administrator.musicplayer.R;
 import com.example.administrator.musicplayer.adapter.SonglistAdapter;
-import com.example.administrator.musicplayer.bean.SongInfo;
+import com.example.administrator.musicplayer.bean.Song;
 import com.example.administrator.musicplayer.interfaces.SonglistOnItemClickListener;
-import com.example.administrator.musicplayer.utils.SongUtil;
 
 import java.util.ArrayList;
 
@@ -30,8 +29,12 @@ public class SonglistFragment extends Fragment {
     ListView lv_Songlist;
 
     private SonglistAdapter songlistAdapter;
-    private ArrayList<SongInfo> songList;
+    private ArrayList<Song> songlistList;
     Context context;
+
+    public SonglistFragment(ArrayList<Song> songlistList) {
+        this.songlistList = songlistList;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -43,13 +46,12 @@ public class SonglistFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         songlist = inflater.inflate(R.layout.layout_songlist, container, false);
         ButterKnife.bind(this, songlist);
-        initData();
         initView();
         return songlist;
     }
 
     private void initView() {
-        songlistAdapter = new SonglistAdapter(context, songList);
+        songlistAdapter = new SonglistAdapter(context, songlistList);
         lv_Songlist.setAdapter(songlistAdapter);
         lv_Songlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -59,12 +61,6 @@ public class SonglistFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private ArrayList<SongInfo> initData() {
-        songList = new ArrayList<SongInfo>();
-        songList = SongUtil.GetAllSongInfo(context);
-        return songList;
     }
 
     @Override

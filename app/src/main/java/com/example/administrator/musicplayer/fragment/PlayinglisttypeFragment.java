@@ -12,7 +12,11 @@ import android.widget.ListView;
 
 import com.example.administrator.musicplayer.R;
 import com.example.administrator.musicplayer.adapter.PlaylisttypeAdapter;
+import com.example.administrator.musicplayer.bean.PlaybackList;
 import com.example.administrator.musicplayer.interfaces.PlaylistypeOnItemClickListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,7 +31,11 @@ public class PlayinglisttypeFragment extends Fragment {
 
 
     Context context;
+    private ArrayList<PlaybackList> PlaybackListData;
 
+    public PlayinglisttypeFragment(ArrayList<PlaybackList> playbackListData) {
+        PlaybackListData = playbackListData;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -39,7 +47,7 @@ public class PlayinglisttypeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         playlisttype = inflater.inflate(R.layout.layout_playlisttype, container, false);
         ButterKnife.bind(this, playlisttype);
-        PlaylisttypeAdapter playlisttypeAdapter = new PlaylisttypeAdapter(context, 147, 20);
+        PlaylisttypeAdapter playlisttypeAdapter = new PlaylisttypeAdapter(context,PlaybackListData);//第二个参数是列表类型信息
         lv_Playlisttype.setAdapter(playlisttypeAdapter);
         lv_Playlisttype.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -48,7 +56,6 @@ public class PlayinglisttypeFragment extends Fragment {
                 {
                     ((PlaylistypeOnItemClickListener) getActivity()).OnListtypeItemClick(position);
                 }
-//
             }
         });
 

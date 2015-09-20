@@ -3,14 +3,13 @@ package com.example.administrator.musicplayer.bean;
 /**
  * Created by Administrator on 2015/9/2.
  */
-public class SongInfo {
+public class Song {
     private int id;
     private String name;
     private String artist;
     private String album;
     private int duration;
     private int currentPosition;
-    private int state;
     private int size;
     private String path;
     private int index;
@@ -61,14 +60,6 @@ public class SongInfo {
 
     public void setCurrentPosition(int currentPosition) {
         this.currentPosition = currentPosition;
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
     }
 
     public int getSize() {

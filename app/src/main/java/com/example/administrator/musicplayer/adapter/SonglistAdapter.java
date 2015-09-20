@@ -1,11 +1,7 @@
 package com.example.administrator.musicplayer.adapter;
 
 
-import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.administrator.musicplayer.R;
-import com.example.administrator.musicplayer.bean.SongInfo;
-import com.example.administrator.musicplayer.utils.SongUtil;
+import com.example.administrator.musicplayer.bean.Song;
 
-import java.net.ContentHandler;
 import java.util.ArrayList;
 
 /**
@@ -26,12 +20,12 @@ public class SonglistAdapter extends BaseAdapter {
     Context context;
 
     //歌曲信息列表
-    ArrayList<SongInfo> songList;
+    ArrayList<Song> songList;
     LayoutInflater layoutInflater;
 
 
 
-    public SonglistAdapter(Context context, ArrayList<SongInfo> songList) {
+    public SonglistAdapter(Context context, ArrayList<Song> songList) {
         this.context = context;
         this.songList = songList;
         layoutInflater = LayoutInflater.from(context);

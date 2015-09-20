@@ -6,7 +6,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/lv_playlisttype"
-        android:layout_marginTop="20dp"
         android:dividerHeight="20dp"
         android:divider="#0000">
     </ListView>

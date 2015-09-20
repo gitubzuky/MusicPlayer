@@ -1,6 +1,7 @@
 package com.example.administrator.musicplayer.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.administrator.musicplayer.R;
+import com.example.administrator.musicplayer.bean.PlaybackList;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
-import butterknife.BindString;
 import butterknife.ButterKnife;
 
 
@@ -21,60 +24,61 @@ import butterknife.ButterKnife;
 public class PlaylisttypeAdapter extends BaseAdapter {
     private LayoutInflater inflater_Playlisttype;
     private Context context;
-    private int defaultsongnum;
-    private int likesongnum;
+    ArrayList<PlaybackList> PlaybackListData;
 
 
     /**
      * 播放列表类型适配器 @param context @param defaultsongnum  默认列表歌曲数量 @param likesongnum 喜欢列表歌曲数量
      */
-    public PlaylisttypeAdapter(Context context, int defaultsongnum, int likesongnum) {
+    public PlaylisttypeAdapter(Context context, ArrayList<PlaybackList> PlaybackListData) {
         this.inflater_Playlisttype = LayoutInflater.from(context);
         this.context = context;
-        this.likesongnum = likesongnum;
-        this.defaultsongnum = defaultsongnum;
+        this.PlaybackListData = PlaybackListData;
     }
+
 
     @Override
     public int getCount() {
-        return 3;
+        return PlaybackListData.size()+1;
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return PlaybackListData.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        if (convertView == null && position == 0) {
-            convertView = inflater_Playlisttype.inflate(R.layout.item_playlisttype, null);
-            holder = new ViewHolder(convertView);
-            holder.tv_item_playlisttype_title = (TextView) convertView.findViewById(R.id.tv_item_playlisttype_title);
-
-            holder.tv_item_playlisttype_title.setText("默认列表(" + defaultsongnum + "首)");
-        }
-        if (convertView == null && position == 1) {
+        if (position == 0) {
             convertView = inflater_Playlisttype.inflate(R.layout.item_playlisttype, null);
             holder = new ViewHolder(convertView);
 
-            holder.iv_item_playlisttype_icon.setImageResource(R.drawable.likelist_icon);
-            holder.tv_item_playlisttype_title.setText("我喜欢的(" + likesongnum + "首)");
-        }
-        if (convertView == null && position == 2) {
-            convertView = inflater_Playlisttype.inflate(R.layout.item_playlisttype, null);
-            holder = new ViewHolder(convertView);
-
-            holder.iv_item_playlisttype_icon.setImageResource(R.drawable.newlist_icon);
+            holder.iv_item_playlisttype_icon.setImageResource(R.drawable.icon_newlist);
             holder.tv_item_playlisttype_title.setText("新建列表");
             holder.iv_item_playlisttype_redirect.setVisibility(View.GONE);
+            convertView.setTag(holder);
+            return convertView;
         }
+        if (convertView == null) {
+            convertView = inflater_Playlisttype.inflate(R.layout.item_playlisttype, null);
+            holder = new ViewHolder(convertView);
+
+            convertView.setTag(holder);
+        }
+        else{
+            holder = (ViewHolder)convertView.getTag();
+        }
+        Log.i("position", "" + position);
+        Log.i("listTypeList", "listtypelist(" + (position - 1) + "):" + PlaybackListData.get(position - 1).getPlaybacklistname());
+        holder.iv_item_playlisttype_icon.setImageResource(PlaybackListData.get(position - 1).getIconId());
+        holder.tv_item_playlisttype_title.setText(PlaybackListData.get(position - 1).getPlaybacklistname() + "(" + PlaybackListData.get(position - 1).getSonglist().size() + "首)");
+        holder.iv_item_playlisttype_redirect.setVisibility(View.VISIBLE);
         return convertView;
     }
 
