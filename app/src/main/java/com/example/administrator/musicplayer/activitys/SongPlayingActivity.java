@@ -1,23 +1,20 @@
 package com.example.administrator.musicplayer.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.administrator.musicplayer.R;
-import com.example.administrator.musicplayer.adapter.SonglistAdapter;
 import com.example.administrator.musicplayer.application.MusicPlayerApplication;
 import com.example.administrator.musicplayer.bean.Song;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
+import com.example.administrator.musicplayer.utils.OtherUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,7 +22,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Administrator on 2015/9/2.
  */
-public class SongPlayingActivity extends Activity {
+public class SongPlayingActivity extends ReceiverActivity {
 
     @Bind(R.id.tv_playing_title)
     TextView tv_playing_title;
@@ -40,14 +37,17 @@ public class SongPlayingActivity extends Activity {
     @Bind(R.id.ibtn_playing_showlyric)
     ImageButton ibtn_playing_showlyric;
     @Bind(R.id.ibtn_playing_showlist)
-    ImageButton ibtn_playing_showlist;
+    ImageButton ibtn_playing_model;
     @Bind(R.id.ibtn_playing_like)
     ImageButton ibtn_playing_like;
     @Bind(R.id.ibtn_playing_previous)
     ImageButton ibtn_playing_previous;
     @Bind(R.id.ibtn_playing_next)
     ImageButton ibtn_playing_next;
-    Intent intent;
+
+    Intent startserviceintent;
+    Song CurSong;
+    Intent resultintent;
 
     MusicPlayerApplication musicPlayerApplication;
 
@@ -60,20 +60,30 @@ public class SongPlayingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_playing);
         ButterKnife.bind(this);
-        intent = new Intent();
-        intent.setAction("com.example.administrator.service.AUDIOPLAY_SERVICE");
-        startService(intent);
+        if (musicPlayerApplication.getMediaPlayer() == null) {
+            startserviceintent = new Intent();
+            startserviceintent.setAction("com.example.administrator.service.AUDIOPLAY_SERVICE");
+            startService(startserviceintent);
+        }
+        if (!getIntent().getBooleanExtra("bottomclick", false)) {
+            startserviceintent = new Intent();
+            startserviceintent.setAction("com.example.administrator.service.AUDIOPLAY_SERVICE");
+            startService(startserviceintent);
+        }
+
+        initData();
         initView();
     }
 
-    private void initView(){
-        Song CurSong = musicPlayerApplication.getCurSong();
-        String title = "";
-        String path = "";
-        title = CurSong.getName()+"-"+CurSong.getArtist();
-        path = CurSong.getPath();
-        Log.i("MainActivity", "fromMainActivity" + path);
-        tv_playing_songname.setText(title);
+    private void initData() {
+        CurSong = musicPlayerApplication.getCurSong();
+
+    }
+
+    private void initView() {
+
+        Log.i("MainActivity", "fromMainActivity" + CurSong.getPath());
+        tv_playing_songname.setText(CurSong.getName() + "-" + CurSong.getArtist());
 
         ibtn_playing_playorpause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,48 +95,116 @@ public class SongPlayingActivity extends Activity {
         ibtn_playing_previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(musicPlayerApplication.getModel() == musicPlayerApplication.ORDER){
+                    musicPlayerApplication.getMediaPlayer().stop();
+                    musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() - 1);
+                    CurSong = musicPlayerApplication.getCurSong();
+                    String playingtitle = CurSong.getName() + "-" + CurSong.getArtist();
+                    tv_playing_songname.setText(playingtitle);
 
-                musicPlayerApplication.getMediaPlayer().stop();
-                musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() - 1);
-                Song CurSong = musicPlayerApplication.getCurSong();
+                    play();
+                }
+                else if(musicPlayerApplication.getModel() == musicPlayerApplication.SHUFFLE){
+                    musicPlayerApplication.getMediaPlayer().stop();
+                    if(musicPlayerApplication.getRandomtag()< 0 || musicPlayerApplication.getRandomtag() >= musicPlayerApplication.getCurSongList().size()){
+                        musicPlayerApplication.setRandomtag(0);
+                    }
+                    else{
+                        musicPlayerApplication.setRandomtag(musicPlayerApplication.getRandomtag() - 1);
+                        musicPlayerApplication.setCurposition(musicPlayerApplication.getRandom()[musicPlayerApplication.getRandomtag()]);
+                    }
+                    CurSong = musicPlayerApplication.getCurSong();
+                    String playingtitle = CurSong.getName() + "-" + CurSong.getArtist();
+                    tv_playing_songname.setText(playingtitle);
 
-                previous();
-
-                String playingtitle = CurSong.getName() + "-" + CurSong.getArtist();
-                tv_playing_songname.setText(playingtitle);
-                getIntent().putExtra("Playingtitle", playingtitle);
+                    play();
+                }
             }
         });
 
         ibtn_playing_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                musicPlayerApplication.getMediaPlayer().stop();
-                musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() + 1);
-                Song CurSong = musicPlayerApplication.getCurSong();
-                String playingtitle = CurSong.getName() + "-" + CurSong.getArtist();
-                tv_playing_songname.setText(playingtitle);
+                if (musicPlayerApplication.getModel() == musicPlayerApplication.ORDER) {
+                    musicPlayerApplication.getMediaPlayer().stop();
+                    musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() + 1);
+                    CurSong = musicPlayerApplication.getCurSong();
+                    String playingtitle = CurSong.getName() + "-" + CurSong.getArtist();
+                    tv_playing_songname.setText(playingtitle);
 
-                next();
+                    play();
+                } else if (musicPlayerApplication.getModel() == musicPlayerApplication.SHUFFLE) {
+                    musicPlayerApplication.getMediaPlayer().stop();
+                    if (musicPlayerApplication.getRandomtag() < 0 || musicPlayerApplication.getRandomtag() >= musicPlayerApplication.getCurSongList().size()) {
+                        musicPlayerApplication.setRandomtag(0);
+                    } else {
+                        musicPlayerApplication.setRandomtag(musicPlayerApplication.getRandomtag() + 1);
+                        musicPlayerApplication.setCurposition(musicPlayerApplication.getRandom()[musicPlayerApplication.getRandomtag()]);
+                    }
+                    CurSong = musicPlayerApplication.getCurSong();
+                    String playingtitle = CurSong.getName() + "-" + CurSong.getArtist();
+                    tv_playing_songname.setText(playingtitle);
 
-                Intent intent = new Intent();
-                intent.putExtra("PlayingTitle", playingtitle);
-                setResult(RESULT_OK, intent);
+                    play();
+                }
             }
         });
+
+        ibtn_playing_model.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (musicPlayerApplication.getModel() == musicPlayerApplication.ORDER) {
+                    musicPlayerApplication.setModel(musicPlayerApplication.SHUFFLE);
+                    musicPlayerApplication.setRandom(OtherUtil.randomArray(
+                                    0,
+                                    musicPlayerApplication.getCurSongList().size() - 1,
+                                    musicPlayerApplication.getCurSongList().size())
+                    );
+                    Toast.makeText(SongPlayingActivity.this, "已切换至随机播放", Toast.LENGTH_SHORT).show();
+                }
+                else if (musicPlayerApplication.getModel() == musicPlayerApplication.SHUFFLE) {
+                    musicPlayerApplication.setModel(musicPlayerApplication.ORDER);
+                    Toast.makeText(SongPlayingActivity.this, "已切换至顺序播放", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
-    private void pause(){
-        if (musicPlayerApplication.getMediaPlayer().isPlaying()) {
+    /**
+     * 实现父类的抽象函数，MainActivity接收到广播的时候需要完成的任务
+     */
+    @Override
+    protected void doMainActivityAction() {
+
+    }
+
+    /**
+     * 实现父类的抽象函数，SongplayingActivity接收到广播的时候需要完成的任务
+     */
+    @Override
+    protected void doSongplayingActivityAction() {
+        CurSong = musicPlayerApplication.getCurSong();
+        tv_playing_songname.setText(CurSong.getName() + "-" + CurSong.getArtist());
+    }
+
+    private void pause() {
+        if (musicPlayerApplication.getMediaPlayer() == null) {
+            Log.i("MediaPlayer", "MediaPlayer");
+            Intent intent = new Intent();
+            intent.setAction("com.example.administrator.service.AUDIOPLAY_SERVICE");
+            startService(intent);
+        } else if (musicPlayerApplication.getMediaPlayer().isPlaying()) {
             musicPlayerApplication.getMediaPlayer().pause();
             musicPlayerApplication.ChangetoPauseState();
-        } else if (musicPlayerApplication.getState() == musicPlayerApplication.getPAUSE()) {
+        } else if (musicPlayerApplication.getState() == musicPlayerApplication.PAUSE) {
             musicPlayerApplication.getMediaPlayer().start();
             musicPlayerApplication.ChangetoPlayingState();
-        }
+    }
     }
 
-    private void previous(){
+    //播放
+    private void play() {
         try {
             if (musicPlayerApplication.getMediaPlayer() == null) {
                 musicPlayerApplication.setMediaPlayer(new MediaPlayer());
@@ -142,8 +220,14 @@ public class SongPlayingActivity extends Activity {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         mp.stop();
-                        musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() - 1);
-                        previous();
+                        if(musicPlayerApplication.getModel() == musicPlayerApplication.ORDER){
+                            musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() + 1);
+                        }
+                        else if (musicPlayerApplication.getModel() == musicPlayerApplication.SHUFFLE){
+                            musicPlayerApplication.setRandomtag(musicPlayerApplication.getRandomtag() + 1);
+                            musicPlayerApplication.setCurposition(musicPlayerApplication.getRandom()[musicPlayerApplication.getRandomtag()]);
+                        }
+                        play();
                     }
                 });
             } else {
@@ -157,41 +241,53 @@ public class SongPlayingActivity extends Activity {
         }
     }
 
-    private void next(){
-        try {
-            if (musicPlayerApplication.getMediaPlayer() == null) {
-                musicPlayerApplication.setMediaPlayer(new MediaPlayer());
-                musicPlayerApplication.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mp.start();
-                        musicPlayerApplication.setMediaPlayer(mp);
-                        musicPlayerApplication.ChangetoPlayingState();
-                    }
-                });
-                musicPlayerApplication.getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.stop();
-                        musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() + 1);
-                        next();
-                    }
-                });
-            } else {
-                musicPlayerApplication.getMediaPlayer().reset();
-            }
-            musicPlayerApplication.getMediaPlayer().setDataSource(musicPlayerApplication.getCurSong().getPath());
-            musicPlayerApplication.getMediaPlayer().prepareAsync();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
+//    //下一首功能
+//    private void next() {
+//        try {
+//            if (musicPlayerApplication.getMediaPlayer() == null) {
+//                musicPlayerApplication.setMediaPlayer(new MediaPlayer());
+//                musicPlayerApplication.getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                    @Override
+//                    public void onPrepared(MediaPlayer mp) {
+//                        mp.start();
+//                        musicPlayerApplication.setMediaPlayer(mp);
+//                        musicPlayerApplication.ChangetoPlayingState();
+//                    }
+//                });
+//                musicPlayerApplication.getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                    @Override
+//                    public void onCompletion(MediaPlayer mp) {
+//                        mp.stop();
+//                        musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() + 1);
+//                        next();
+//                    }
+//                });
+//            } else {
+//                musicPlayerApplication.getMediaPlayer().reset();
+//            }
+//            musicPlayerApplication.getMediaPlayer().setDataSource(musicPlayerApplication.getCurSong().getPath());
+//            musicPlayerApplication.getMediaPlayer().prepareAsync();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i("TAG", "SongplayingActivity is destory");
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            resultintent = new Intent();
+            resultintent.putExtra("PlayingTitle", tv_playing_songname.getText().toString());
+            setResult(RESULT_OK, resultintent);
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
 }

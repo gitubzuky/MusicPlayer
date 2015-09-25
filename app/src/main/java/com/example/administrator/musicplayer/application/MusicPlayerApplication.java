@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 
 import com.example.administrator.musicplayer.bean.PlaybackList;
 import com.example.administrator.musicplayer.bean.Song;
+import com.example.administrator.musicplayer.utils.InfoUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,15 +14,21 @@ import java.util.HashMap;
  * Created by Administrator on 2015/9/17.
  */
 public class MusicPlayerApplication extends Application {
+    public static final int PLAYING = 0;
+    public static final int PAUSE = 1;
+    public static final int STOP = 2;
+    public static final int IDLE = 3;
+    public static final int ORDER = 4;
+    public static final int SHUFFLE = 5;
+
     private static MusicPlayerApplication application;
     private MediaPlayer mediaPlayer;
     private int curposition;
     private ArrayList<Song> CurSongList;
-    private static final int PLAYING = 0;
-    private static final int PAUSE = 1;
-    private static final int STOP = 2;
-    private static final int IDLE = 3;
+    public int model;
     int state;
+    int[] random;
+    int randomtag;
 
     private ArrayList<PlaybackList> AllPlaybackList = null;
 
@@ -29,6 +36,8 @@ public class MusicPlayerApplication extends Application {
     public void onCreate() {
         super.onCreate();
         state = IDLE;
+        model = ORDER;
+        randomtag = 0;
 
         if(null == application){
             application = this;
@@ -63,22 +72,6 @@ public class MusicPlayerApplication extends Application {
         this.state = IDLE;
     }
 
-    public static int getPLAYING() {
-        return PLAYING;
-    }
-
-    public static int getPAUSE() {
-        return PAUSE;
-    }
-
-    public static int getSTOP() {
-        return STOP;
-    }
-
-    public static int getIDLE() {
-        return IDLE;
-    }
-
     public int getState() {
         return state;
     }
@@ -91,6 +84,14 @@ public class MusicPlayerApplication extends Application {
         this.curposition = curposition;
     }
 
+    public int[] getRandom() {
+        return random;
+    }
+
+    public void setRandom(int[] random) {
+        this.random = random;
+    }
+
     public ArrayList<Song> getCurSongList() {
         return CurSongList;
     }
@@ -100,11 +101,12 @@ public class MusicPlayerApplication extends Application {
     }
 
     public Song getCurSong(){
-        if(curposition >= 0 && curposition < getCurSongList().size()){
-            return CurSongList.get(curposition);
+        if(curposition < 0 || curposition >= CurSongList.size()){
+            curposition = 0;
+            return CurSongList.get(0);
         }
         else{
-            return null;
+            return CurSongList.get(curposition);
         }
     }
 
@@ -114,5 +116,21 @@ public class MusicPlayerApplication extends Application {
 
     public void setAllPlaybackList(ArrayList<PlaybackList> allPlaybackList) {
         AllPlaybackList = allPlaybackList;
+    }
+
+    public int getModel() {
+        return model;
+    }
+
+    public void setModel(int model) {
+        this.model = model;
+    }
+
+    public int getRandomtag() {
+        return randomtag;
+    }
+
+    public void setRandomtag(int randomtag) {
+        this.randomtag = randomtag;
     }
 }

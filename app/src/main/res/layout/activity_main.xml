@@ -30,9 +30,8 @@
         <include
             layout="@layout/layout_bottomplaying"
             android:layout_height="70dp"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
-            android:id="@+id/bottomplaying"
             />
 
     </RelativeLayout>

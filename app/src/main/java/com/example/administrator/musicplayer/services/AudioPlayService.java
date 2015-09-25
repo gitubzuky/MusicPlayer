@@ -3,12 +3,15 @@ package com.example.administrator.musicplayer.services;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.administrator.musicplayer.application.MusicPlayerApplication;
+import com.example.administrator.musicplayer.bean.Song;
 
 import java.io.IOException;
 
@@ -21,6 +24,7 @@ public class AudioPlayService extends Service implements MediaPlayer.OnPreparedL
 
     MusicPlayerApplication musicPlayerApplication;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -32,11 +36,8 @@ public class AudioPlayService extends Service implements MediaPlayer.OnPreparedL
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("Service", "Service Start");
-//        if(intent.getAction().equals(ACTION_PLAY)){
-//        }
         play();
         return super.onStartCommand(intent, flags, startId);
-//        return START_FLAG_RETRY;
     }
 
     public void play(){
@@ -81,7 +82,29 @@ public class AudioPlayService extends Service implements MediaPlayer.OnPreparedL
     @Override
     public void onCompletion(MediaPlayer mp) {
         mp.stop();
-        musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() + 1);
+        if (musicPlayerApplication.getModel() == musicPlayerApplication.ORDER) {
+            musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() + 1);
+        }
+        else if (musicPlayerApplication.getModel() == musicPlayerApplication.SHUFFLE) {
+            if (musicPlayerApplication.getRandomtag() < 0 || musicPlayerApplication.getRandomtag() >= musicPlayerApplication.getCurSongList().size()) {
+                musicPlayerApplication.setRandomtag(0);
+            } else {
+                musicPlayerApplication.setRandomtag(musicPlayerApplication.getRandomtag() + 1);
+                musicPlayerApplication.setCurposition(musicPlayerApplication.getRandom()[musicPlayerApplication.getRandomtag()]);
+            }
+        }
+//        musicPlayerApplication.setCurposition(musicPlayerApplication.getCurposition() + 1);
         play();
+//        Song cursong = musicPlayerApplication.getCurSong();
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("CurSong", cursong);
+        Intent intent_songplaying = new Intent();
+        intent_songplaying.setAction("com.example.broadcastreceivers.SONGPLAYINGACTIVITY_RECEIVER");
+        sendBroadcast(intent_songplaying);
+
+//        Intent intent_main = new Intent();
+//        intent_main.setAction("com.example.broadcastreceivers.MAINACTIVITY_RECEIVER");
+////        intent.putExtras(bundle);
+//        sendBroadcast(intent_main);
     }
 }

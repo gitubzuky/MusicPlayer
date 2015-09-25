@@ -5,12 +5,11 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -22,6 +21,8 @@ import android.widget.Toast;
 import com.example.administrator.musicplayer.R;
 import com.example.administrator.musicplayer.application.MusicPlayerApplication;
 import com.example.administrator.musicplayer.bean.PlaybackList;
+import com.example.administrator.musicplayer.bean.Song;
+import com.example.administrator.musicplayer.broadcastreceivers.ActivityReceiver;
 import com.example.administrator.musicplayer.fragment.PlayinglisttypeFragment;
 import com.example.administrator.musicplayer.fragment.SonglistFragment;
 import com.example.administrator.musicplayer.interfaces.PlaylistypeOnItemClickListener;
@@ -35,10 +36,6 @@ import butterknife.ButterKnife;
 
 
 public class MainActivity extends Activity implements PlaylistypeOnItemClickListener, SonglistOnItemClickListener {
-
-
-    public PlayinglisttypeFragment playlisttypefragment;
-    public SonglistFragment songlistfragment;
     @Bind(R.id.fm_content)
     FrameLayout fm_Content;
     @Bind(R.id.iv_playing_album)
@@ -54,63 +51,47 @@ public class MainActivity extends Activity implements PlaylistypeOnItemClickList
     @Bind(R.id.dl_playlisttype)
     DrawerLayout dl_Playlisttype;
 
+    public PlayinglisttypeFragment playlisttypefragment;
+    public SonglistFragment songlistfragment;
 
     private ArrayList<PlaybackList> PlaybackListdata;
-
+    Song currentsong;
     MusicPlayerApplication musicPlayerApplication;
+    ActivityReceiver mainactivityReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        musicPlayerApplication = MusicPlayerApplication.getInstance();
-        Log.i("State", "State -->" + musicPlayerApplication.getState() + "&" + musicPlayerApplication.getPLAYING());
-        initData();
-        if (savedInstanceState == null) {
-            initView();
-        }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        musicPlayerApplication = MusicPlayerApplication.getInstance();
+        initData();
+        initView();
+        if (savedInstanceState == null) {
+            setDefaultFragment();
+        }
+
     }
 
     public void initData() {
         PlaybackListdata = InfoUtil.InitPlaybackListInfo(this);
+        musicPlayerApplication.setCurSongList(PlaybackListdata.get(0).getSonglist());
+        musicPlayerApplication.setCurposition(0);
+        currentsong = musicPlayerApplication.getCurSong();
+
+
     }
 
-    //未解决：获取不了控件对象
+    /**
+     * 初始化界面
+     */
     private void initView() {
-//        View layout = getLayoutInflater().inflate(R.layout.layout_bottomplaying, null);
-//        tv_PlayingName = (TextView) layout.findViewById(R.id.tv_playing_name);
-//        ibtn_Bottom_Playorpause = (ImageButton) layout.findViewById(R.id.ibtn_bottom_playorpause);
-//        tv_PlayingName.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, SongPlayingActivity.class);
-//                startActivityForResult(intent, 0);
-//            }
-//        });
-//        if (ibtn_Bottom_Playorpause == null) {
-//            Log.e("Error", "控件为空");
-//        }
-//        ibtn_Bottom_Playorpause.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                pause();
-//            }
-//        });
-        setDefaultFragment();
-
+        tv_PlayingName.setText(currentsong.getName() + "-" + currentsong.getArtist());
     }
 
-    private void pause() {
-        if (musicPlayerApplication.getMediaPlayer().isPlaying()) {
-            musicPlayerApplication.getMediaPlayer().pause();
-            musicPlayerApplication.ChangetoPauseState();
-        } else if (musicPlayerApplication.getState() == musicPlayerApplication.getPAUSE()) {
-            musicPlayerApplication.getMediaPlayer().start();
-            musicPlayerApplication.ChangetoPlayingState();
-        }
-    }
-
+    /**
+     * 初始化Fragment
+     */
     private void setDefaultFragment() {
         playlisttypefragment = new PlayinglisttypeFragment(PlaybackListdata);
         FragmentManager manager = getFragmentManager();
@@ -120,27 +101,53 @@ public class MainActivity extends Activity implements PlaylistypeOnItemClickList
         transaction.commit();
     }
 
+//    /**
+//     * 实现父类的抽象函数，MainActivity接收到广播的时候需要完成的任务
+//     */
+//    @Override
+//    protected void doMainActivityAction() {
+//        currentsong = musicPlayerApplication.getCurSong();
+//        tv_PlayingName.setText(currentsong.getName() + "-" + currentsong.getArtist());
+//    }
+//
+//    /**
+//     * 实现父类的抽象函数，SongplayingActivity接收到广播的时候做的事情
+//     */
+//    @Override
+//    protected void doSongplayingActivityAction() {
+//
+//    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    /**
+     * 底部布局点击事件（xml文件中定义了onClick属性）
+     *
+     * @param view
+     */
+    public void SongnameClick(View view) {
+        Intent intent = new Intent(MainActivity.this, SongPlayingActivity.class);
+        intent.putExtra("bottomclick", true);
+        startActivityForResult(intent, 0);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    /**
+     * 底部暂停按钮点击事件（xml文件中定义了onClick属性）
+     *
+     * @param view
+     */
+    public void pause(View view) {
+        if (musicPlayerApplication.getMediaPlayer() == null) {
+            Log.i("service", "service is not running");
+            Intent intent = new Intent();
+            intent.setAction("com.example.administrator.service.AUDIOPLAY_SERVICE");
+            startService(intent);
+        } else if (musicPlayerApplication.getMediaPlayer().isPlaying()) {
+            musicPlayerApplication.getMediaPlayer().pause();
+            musicPlayerApplication.ChangetoPauseState();
+        } else if (musicPlayerApplication.getState() == musicPlayerApplication.PAUSE) {
+            musicPlayerApplication.getMediaPlayer().start();
+            musicPlayerApplication.ChangetoPlayingState();
         }
 
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -175,11 +182,12 @@ public class MainActivity extends Activity implements PlaylistypeOnItemClickList
 
         musicPlayerApplication.setCurposition(position);
 
-        if (musicPlayerApplication.getState() == musicPlayerApplication.getPLAYING()) {
+        if (musicPlayerApplication.getState() == musicPlayerApplication.PLAYING) {
             musicPlayerApplication.getMediaPlayer().stop();
         }
         Intent intent = new Intent(MainActivity.this, SongPlayingActivity.class);
         startActivityForResult(intent, 0);
+
     }
 
     @Override
@@ -201,5 +209,11 @@ public class MainActivity extends Activity implements PlaylistypeOnItemClickList
         Intent intent = new Intent();
         intent.setAction("com.example.administrator.service.AUDIOPLAY_SERVICE");
         stopService(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("MainActivity", "MainActivity is Paused");
     }
 }
