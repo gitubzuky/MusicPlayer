@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/playing_bg">
+    android:background="@drawable/bg_playing">
     <TextView
         android:id="@+id/tv_playing_title"
         android:layout_width="fill_parent"
@@ -31,11 +31,15 @@
         android:id="@+id/rl_playing_albumandplay"
         android:layout_below="@+id/tv_playing_songname"
         android:layout_above="@+id/rl_playing_firtline"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
         >
         <ImageView
             android:id="@+id/iv_playing_albumimg"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/playing_album"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
@@ -43,7 +47,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/playing_playorpausebtn"
+            android:background="@drawable/playorpausebtn_playing"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:id="@+id/ibtn_playing_playorpause" />
@@ -59,14 +63,14 @@
         <ImageButton
             android:layout_width="26dp"
             android:layout_height="30dp"
-            android:background="@drawable/playing_deletefromlistbtn"
+            android:background="@drawable/deletefromlistbtn_playing"
             android:id="@+id/ibtn_playing_deletefromlist"
             android:layout_centerVertical="true"/>
 
         <ImageButton
             android:layout_width="30dp"
             android:layout_height="20dp"
-            android:background="@drawable/playing_showlyricsbtn"
+            android:background="@drawable/showlyricsbtn_playing"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/ibtn_playing_deletefromlist"
             android:id="@+id/ibtn_playing_showlyric"
@@ -77,7 +81,7 @@
             android:layout_width="30dp"
             android:layout_height="10dp"
             android:layout_centerVertical="true"
-            android:background="@drawable/playing_showlistbtn"
+            android:background="@drawable/showlistbtn_playing"
             android:layout_toRightOf="@+id/ibtn_playing_showlyric"
             android:id="@+id/ibtn_playing_showlist"/>
 
@@ -93,13 +97,13 @@
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/playing_likebtn"
+            android:background="@drawable/likebtn_playing"
             android:id="@+id/ibtn_playing_like"/>
 
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/playing_previousbtn"
+            android:background="@drawable/previousbtn_playing"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/ibtn_playing_like"
             android:id="@+id/ibtn_playing_previous"
@@ -111,7 +115,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
-            android:background="@drawable/playing_nextbtn"
+            android:background="@drawable/nextbtn_playing"
             android:layout_toRightOf="@+id/ibtn_playing_previous"
             android:id="@+id/ibtn_playing_next"
             android:layout_alignTop="@+id/ibtn_playing_like"/>

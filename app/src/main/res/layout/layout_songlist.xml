@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/playlist_bg">
+    android:background="@drawable/bg_playlist">
     <ListView
         android:id="@+id/lv_songlist"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@drawable/songlist_bg">
+        android:background="@drawable/bg_songlist">
     </ListView>
 </RelativeLayout>

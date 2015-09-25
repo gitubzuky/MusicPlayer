@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/playlist_bg"
+    android:background="@drawable/bg_playlist"
     android:id="@+id/dl_playlisttype"
     tools:context=".MainActivity">
 
@@ -23,15 +23,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/header"
+            android:layout_above="@+id/bottomplaying"
             android:id="@+id/fm_content"
             />
 
         <include
             layout="@layout/layout_bottomplaying"
             android:layout_height="70dp"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_alignParentBottom="true"
-            android:id="@+id/bottomplaying"
             />
 
     </RelativeLayout>
@@ -40,7 +40,7 @@
         android:id="@+id/nv_playlisttype_navigation"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@drawable/navigation_bg"
+        android:background="@drawable/bg_navigation"
         android:layout_gravity="start"
         app:headerLayout="@layout/navigation_header"
         app:menu="@menu/drawer"
